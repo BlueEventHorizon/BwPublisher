@@ -16,14 +16,14 @@ import Foundation
 public typealias BwObserver = AnyObject
 
 /// Class for canceling subscribe when subscribed instance is destroyed
-public class BwDisposeBag
+public final class BwDisposeBag
 {
     private var disposables = [Disposable]()
     public init() {
     }
-    fileprivate func set(_ deliverable: Disposable)
+    fileprivate func set(_ observerInfo: Disposable)
     {
-        disposables.append(deliverable)
+        //disposables.append(observerInfo)
     }
     deinit {
         for disposable in disposables
@@ -46,20 +46,22 @@ fileprivate protocol Disposable
 }
 
 /// A class that can be observed to return a specific results by closure
-public class BwObservable<ContentsType>
+public final class BwObservable<ContentsType>
 {
     // **********************************************
     /// Class for returning observing results
-    public class BwDeliverable: Disposable
+    public class ObserverInfo: Disposable
     {
         fileprivate var action: ((_ result: ContentsType ) -> Void)
         fileprivate weak var observer: BwObserver?
         fileprivate var once: Bool = false
+        fileprivate var main: Bool = true
         private var observable: BwObservable<ContentsType>?
         
-        required public init(_ observer: BwObserver, observable: BwObservable<ContentsType>, once: Bool, action: @escaping ((ContentsType) -> Void)) {
+        required public init(_ observer: BwObserver, observable: BwObservable<ContentsType>, once: Bool, main: Bool, action: @escaping ((ContentsType) -> Void)) {
             self.observer = observer
             self.once = once
+            self.main = main
             self.action = action
             self.observable = observable
         }
@@ -71,49 +73,58 @@ public class BwObservable<ContentsType>
         
         public func dispose()
         {
-            if let _observer = self.observer
+            if let _observer = observer
             {
                 self.observable?.dispose(by: _observer)
             }
         }
-
-        deinit
-        {
-            print("test comment: deinit")
-        }
     }
     // **********************************************
     
-    private var deliverables: [BwDeliverable] = []
+    private var observerInfos: [ObserverInfo] = []
     private var latestContents: ContentsType?
     
     public init() {
         //observables.append(self)
     }
-    
+
     /// subscribe
     ///
     /// - Parameters:
     ///   - observer: BwObserver that observe this BwObservable. This is just identifier of observer.
     ///   - once: subscribe once
     ///   - latest: immediately return contens, if it already exists.
-    ///   - action: Closure that is invoked when contents are published
-    /// - Returns: BwDeliverable?
+    ///   - main: if true, action executed in main thread
+    ///   - action: closure that is invoked when contents are published
+    /// - Returns: ObserverInfo?
     @discardableResult
-    public func subscribe(_ observer: BwObserver, once: Bool = false, latest: Bool = false, action: @escaping ((_ contents: ContentsType ) -> Void) ) -> BwDeliverable?
+    public func subscribe(_ observer: BwObserver, latest: Bool = false, main: Bool = true, action: @escaping ((_ contents: ContentsType ) -> Void) ) -> ObserverInfo
     {
         if latest, let _latestContents = latestContents
         {
             DispatchQueue.main.async {
                 action(_latestContents)
             }
-            if once { return nil }
         }
 
-        let deliverable = BwDeliverable(observer, observable: self, once: once, action: action)
-        deliverables.append(deliverable)
+        let observerInfo = ObserverInfo(observer, observable: self, once: false, main: main, action: action)
+        observerInfos.append(observerInfo)
     
-        return deliverable
+        return observerInfo
+    }
+
+    public func once(_ observer: BwObserver, latest: Bool = false, main: Bool = true, action: @escaping ((_ contents: ContentsType ) -> Void) )
+    {
+        if latest, let _latestContents = latestContents
+        {
+            DispatchQueue.main.async {
+                action(_latestContents)
+            }
+            return
+        }
+        
+        let observerInfo = ObserverInfo(observer, observable: self, once: true, main: main, action: action)
+        observerInfos.append(observerInfo)
     }
 
     /// Execute action closures
@@ -122,19 +133,28 @@ public class BwObservable<ContentsType>
     public func publish(_ contents: ContentsType)
     {
         latestContents = contents
-        for deliverable in deliverables
+        for observerInfo in observerInfos
         {
-            deliverable.action(contents)
+            if observerInfo.main
+            {
+                DispatchQueue.main.async {
+                    observerInfo.action(contents)
+                }
+            }
+            else
+            {
+                observerInfo.action(contents)
+            }
         }
         
-        deliverables = deliverables.filter({!$0.once})
+        observerInfos = observerInfos.filter({!$0.once})
     }
 
-    /// Discard all BwDeliverable that own the observer specified in the instance
+    /// Discard all ObserverInfo that own the observer specified in the instance
     ///
     /// - Parameter observer: observer
     public func dispose(by observer: BwObserver)
     {
-        deliverables = deliverables.filter({ !($0.observer === observer) })
+        observerInfos = observerInfos.filter({ !($0.observer === observer) })
     }
 }

@@ -28,9 +28,9 @@ class SecondViewController: ChildViewController, ViewControllerGettable
         /// subscribeする前にイベントを発生させる
         vm.secondButton()
         /// 一度だけ実行＆subscribe以降のイベントを取得する
-        vm.ex.secondButton.subscribe(self, once: true, latest: false) { [weak self] (counter) in
+        vm.ex.secondButton.once(self, latest: false) { [weak self] (counter) in
             self?.label.text = String(counter)
-        }?.disposed(by: disaposeBag)
+        }
     }
 
     @IBAction func close(_ sender: Any)

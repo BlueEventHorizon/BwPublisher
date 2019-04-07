@@ -28,9 +28,9 @@ class FirstViewController: ChildViewController, ViewControllerGettable
         /// subscribeする前にイベントを発生させる
         vm.firstButton()
         /// 何度でも実行＆subscribe以前の最新のイベントを取得する
-        vm.ex.firstButton.subscribe(self, once: false, latest: true) { [weak self] (counter) in
+        vm.ex.firstButton.once(self, latest: true) { [weak self] (counter) in
             self?.label.text = String(counter)
-        }?.disposed(by: disaposeBag)
+        }
     }
 
     @IBAction func close(_ sender: Any)
