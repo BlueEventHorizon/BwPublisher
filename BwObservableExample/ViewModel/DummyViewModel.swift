@@ -8,25 +8,21 @@
 
 import Foundation
 
-class DummyViewModel
-{
-    class Ex
-    {
+class DummyViewModel {
+    class Ex {
         var firstButton: BwObservable<Int> = BwObservable<Int>()
         var secondButton: BwObservable<Int> = BwObservable<Int>()
     }
     let ex = Ex()
-    
+
     private var firstCounter: Int = 0
-    func firstButton()
-    {
+    func firstButton() {
         firstCounter += 1
         ex.firstButton.publish(firstCounter)
     }
-    
+
     private var secondCounter: Int = 0
-    func secondButton()
-    {
+    func secondButton() {
         secondCounter += 1
         ex.secondButton.publish(secondCounter)
     }

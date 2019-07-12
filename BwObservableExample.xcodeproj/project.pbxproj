@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5213E56922D8C74F0067CEBB /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5213E56822D8C74F0067CEBB /* Identifiable.swift */; };
+		5213E56B22D8C7830067CEBB /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5213E56A22D8C7830067CEBB /* Date+Ext.swift */; };
+		5213E56D22D8C78C0067CEBB /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5213E56C22D8C78C0067CEBB /* Logger.swift */; };
 		769B5AA5212F96ED00C75F02 /* EntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769B5AA4212F96ED00C75F02 /* EntryViewController.swift */; };
 		769B5AA9212F97B000C75F02 /* CoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769B5AA7212F97B000C75F02 /* CoreViewController.swift */; };
 		769B5AAA212F97B000C75F02 /* ChildViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769B5AA8212F97B000C75F02 /* ChildViewController.swift */; };
@@ -40,6 +43,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5213E56822D8C74F0067CEBB /* Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
+		5213E56A22D8C7830067CEBB /* Date+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
+		5213E56C22D8C78C0067CEBB /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		769B5AA4212F96ED00C75F02 /* EntryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryViewController.swift; sourceTree = "<group>"; };
 		769B5AA7212F97B000C75F02 /* CoreViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreViewController.swift; sourceTree = "<group>"; };
 		769B5AA8212F97B000C75F02 /* ChildViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChildViewController.swift; sourceTree = "<group>"; };
@@ -89,6 +95,9 @@
 		769B5AA6212F97B000C75F02 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				5213E56C22D8C78C0067CEBB /* Logger.swift */,
+				5213E56822D8C74F0067CEBB /* Identifiable.swift */,
+				5213E56A22D8C7830067CEBB /* Date+Ext.swift */,
 				769B5AA7212F97B000C75F02 /* CoreViewController.swift */,
 				769B5AA8212F97B000C75F02 /* ChildViewController.swift */,
 			);
@@ -186,6 +195,7 @@
 				769D8198211043F70073A6B1 /* Sources */,
 				769D8199211043F70073A6B1 /* Frameworks */,
 				769D819A211043F70073A6B1 /* Resources */,
+				5213E56322D8A9980067CEBB /* Swiftlint Run Script */,
 			);
 			buildRules = (
 			);
@@ -302,19 +312,43 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5213E56322D8A9980067CEBB /* Swiftlint Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swiftlint Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint autocorrect --format\nswiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		769D8198211043F70073A6B1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				769D81A4211043F70073A6B1 /* SecondViewController.swift in Sources */,
+				5213E56D22D8C78C0067CEBB /* Logger.swift in Sources */,
 				769B5AAA212F97B000C75F02 /* ChildViewController.swift in Sources */,
+				5213E56922D8C74F0067CEBB /* Identifiable.swift in Sources */,
 				769D81A0211043F70073A6B1 /* AppDelegate.swift in Sources */,
 				769B5AA9212F97B000C75F02 /* CoreViewController.swift in Sources */,
 				769B5AA5212F96ED00C75F02 /* EntryViewController.swift in Sources */,
 				769D81A2211043F70073A6B1 /* FirstViewController.swift in Sources */,
 				76D7C498211307AC00D2DCE3 /* DummyViewModel.swift in Sources */,
 				76B710F0211044A500C49903 /* BwObservable.swift in Sources */,
+				5213E56B22D8C7830067CEBB /* Date+Ext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,22 +8,20 @@
 
 import UIKit
 
-class SecondViewController: ChildViewController, ViewControllerGettable
-{
+class SecondViewController: ChildViewController, ViewControllerGettable {
     static var storyboardName: String = "Main"
-    
+
     @IBOutlet weak var label: UILabel!
-    
+
     /// このインスタンスが消滅すると自動的にsubscribeを停止します
     var disaposeBag = BwDisposeBag()
-    lazy var vm = {DummyViewModel()}()
-    
+    lazy var vm = { DummyViewModel() }()
+
     deinit {
         print("SecondViewController:deinit")
     }
 
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         /// subscribeする前にイベントを発生させる
         vm.secondButton()
@@ -33,14 +31,11 @@ class SecondViewController: ChildViewController, ViewControllerGettable
         }
     }
 
-    @IBAction func close(_ sender: Any)
-    {
+    @IBAction func close(_ sender: Any) {
         dismiss()
     }
-    
-    @IBAction func pushed(_ sender: Any)
-    {
+
+    @IBAction func pushed(_ sender: Any) {
         vm.secondButton()
     }
 }
-
