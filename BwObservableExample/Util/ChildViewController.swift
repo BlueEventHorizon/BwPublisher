@@ -265,7 +265,7 @@ open class ChildViewController: CoreViewController, UIGestureRecognizerDelegate 
 
     public func show(created: ((_ obj: UIViewController) -> Void)?,
                      completion:((_ obj: UIViewController) -> Void)?
-        ) {
+    ) {
         ChildViewController.window = UIWindow(frame: UIScreen.main.bounds)
         ChildViewController.window?.windowLevel = UIWindowLevelAlert
         ChildViewController.window?.backgroundColor = UIColor.black.withAlphaComponent(0.3)
