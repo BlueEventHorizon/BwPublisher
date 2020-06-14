@@ -1,4 +1,4 @@
-# PPublishr
+# PPublisher
 
 This is private implementation of core of publisher/subscriber.
 
