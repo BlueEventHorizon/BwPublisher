@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Logger",
+        "repositoryURL": "git@github.com:BlueEventHorizon/Logger.git",
+        "state": {
+          "branch": null,
+          "revision": "160c0925137f95daedba9f94bacd0538ec1a7060",
+          "version": "1.5.3"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,14 +1,11 @@
-# About this App
+# PPublishr
 
-This App is a sample sourcecode includes  simple subscriber and publisher library.
-You can use this library instead of core functionality of RxSwit.
+This is private implementation of core of publisher/subscriber.
 
-# Build Environ
+I don't need any waste functions except observing values.
 
-## Xcode
-- version 10.3
-- Swift 5.1
+That is most simple publisher/subscriber library.
 
-## Other Library
+And to study Apple's combine or RxSwift is not aim for this project.
 
-No need to use carthage or cocoapods
+
