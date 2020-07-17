@@ -1,6 +1,6 @@
 //
 //  PublisherTests.swift
-//  PublisherTests
+//  PPublisher
 //
 //  Created by k_terada on 2020/05/31.
 //  Copyright © 2020 k2moons. All rights reserved.
@@ -9,8 +9,9 @@
 import XCTest
 import Logger
 
-class PublisherTests: XCTestCase {
+let log = Logger.default
 
+class PublisherTests: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -20,7 +21,6 @@ class PublisherTests: XCTestCase {
     }
 
     func testPublisherWithSingleton() throws {
-
         let expectation1 = XCTestExpectation(description: "expectation1")
         var subscriber: Subscriber?
 
@@ -49,7 +49,7 @@ class PublisherTests: XCTestCase {
         }
 
         class Subscriber {
-            var bag: SubscribeBag = SubscribeBag()
+            var bag: SubscriptionBag = SubscriptionBag()
             let publisher = SingletonPublisher.shared
 
             init() {
@@ -69,8 +69,7 @@ class PublisherTests: XCTestCase {
 
         func makeSubscriberScope() {
             DispatchQueue.global(qos: .background).async {
-
-                usleep(1000_000)
+                usleep(1_000_000)
 
                 log.info("subscriber will nil")
                 subscriber = nil
@@ -85,34 +84,33 @@ class PublisherTests: XCTestCase {
 
         wait(for: [expectation1], timeout: 10.0)
 
-        usleep(1000_000)
+        usleep(1_000_000)
 
         log.info("Exit \(#function)")
     }
 
     func testPublisher() {
-
         let expectation1 = XCTestExpectation(description: "expectation1")
         let expectation2 = XCTestExpectation(description: "expectation2")
         let expectation3 = XCTestExpectation(description: "expectation3")
         let expectation4 = XCTestExpectation(description: "expectation4")
 
-        let bag: SubscribeBag = SubscribeBag()
+        let bag: SubscriptionBag = SubscriptionBag()
 
         let publisher = Publisher<String>()
-        publisher.once(self, action: {r in print("\(r)-1")
+        publisher.once(self, action: { r in print("\(r)-1")
             expectation1.fulfill()
         })
 
-        publisher.subscribe(self, action: {r in print("\(r)-2")
+        publisher.subscribe(self, action: { r in print("\(r)-2")
             expectation2.fulfill()
         }).unsubscribed(by: bag)
 
-        publisher.once(self, action: {r in print("\(r)-3")
+        publisher.once(self, action: { r in print("\(r)-3")
             expectation3.fulfill()
         })
 
-        publisher.subscribe(self, action: {r in print("\(r)-4")
+        publisher.subscribe(self, action: { r in print("\(r)-4")
             expectation4.fulfill()
         }).unsubscribed(by: bag)
 
@@ -125,26 +123,25 @@ class PublisherTests: XCTestCase {
     }
 
     func testPTaskBasic() {
-
         let expectation1 = XCTestExpectation(description: "expectation1")
 
-        let task0 = PTaskStart.firstTask { (task) in
+        let task0 = PTaskStart.firstTask { task in
             print("*** 0")
-            usleep(500000)
+            usleep(500_000)
             task.signal(())
         }
 
-        let task1: PTask<Int> = task0.wait { (task, result) in
+        let task1: PTask<Int> = task0.wait { task, result in
             print("*** 1.result = \(result)")
-            usleep(500000)
+            usleep(500_000)
             task.signal(1)
         }
-        let task2: PTask<String> = task1.wait { (task, result) in
+        let task2: PTask<String> = task1.wait { task, result in
             print("*** 2.result = \(result)")
-            usleep(500000)
+            usleep(500_000)
             task.signal("*")
         }
-        let _: PTask<Bool> = task2.wait { (task, result) in
+        let _: PTask<Bool> = task2.wait { task, result in
             print("*** 3.result = \(result)")
             task.signal(false)
             expectation1.fulfill()
@@ -159,5 +156,5 @@ class PublisherTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
 }
+

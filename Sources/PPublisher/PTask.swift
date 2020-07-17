@@ -1,6 +1,6 @@
 //
 //  PTask.swift
-//  BwTools
+//  PPublisher
 //
 //  Created by k2moons on 2018/08/20.
 //  Copyright (c) 2018 k2moons. All rights reserved.
@@ -9,10 +9,9 @@
 import Foundation
 
 public typealias PTask = Publisher
-public typealias PTaskStart = PTask<()>
+public typealias PTaskStart = PTask<Void>
 
 public extension PTask {
-
     static func firstTask<Void>(completion: @escaping ((PTaskStart) -> Void)) -> PTaskStart {
         let task = PTaskStart()
         _ = completion(task)
@@ -27,13 +26,13 @@ public extension PTask {
     /// - Returns: PTask
     func wait<TaskType>(main: Bool = true, completion: @escaping ((PTask<TaskType>, ContentsType) -> Void)) -> PTask<TaskType> {
         let task = PTask<TaskType>()
-        self.once(self, latest: true, main: main) { (result) in
+        self.once(self, latest: true, main: main) { result in
             completion(task, result)
         }
         return task
     }
 
-    func wait(_ subscriber: Subscriber, main: Bool = true, action: @escaping ((_ contents: ContentsType ) -> Void) ) {
+    func wait(_ subscriber: Subscriber, main: Bool = true, action: @escaping ((_ contents: ContentsType) -> Void)) {
         once(subscriber, latest: false, main: main, action: action)
     }
 
@@ -45,25 +44,22 @@ public extension PTask {
 // MARK: - Test
 
 open class PublisherTest {
-
-    public init() {
-    }
+    public init() {}
 
     public func test() {
-
-        let task0 = PTaskStart.firstTask { (task) in
+        let task0 = PTaskStart.firstTask { task in
             task.signal(())
         }
 
-        let task1: PTask<Int> = task0.wait { (task, result) in
+        let task1: PTask<Int> = task0.wait { task, result in
             print("*** 1.result = \(String(describing: result))")
             task.signal(1)
         }
-        let task2: PTask<String> = task1.wait { (task, result) in
+        let task2: PTask<String> = task1.wait { task, result in
             print("*** 2.result = \(result)")
             task.signal("")
         }
-        let _: PTask<Bool> = task2.wait { (task, result) in
+        let _: PTask<Bool> = task2.wait { task, result in
             print("*** 3.result = \(result)")
             task.signal(false)
         }
@@ -100,3 +96,4 @@ open class PublisherTest {
         }
     }
 }
+
