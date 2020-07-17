@@ -32,10 +32,6 @@ final class PPublisherTests: XCTestCase {
                     }
                 }
             }
-
-            deinit {
-                log.deinit(self)
-            }
         }
 
         class Subscriber {
@@ -48,12 +44,8 @@ final class PPublisherTests: XCTestCase {
 
             func configure() {
                 publisher.value.subscribe(self) { value in
-                    log.info("value = \(value)")
+                    print("value = \(value)")
                 }.unsubscribed(by: bag)
-            }
-
-            deinit {
-                log.deinit(self)
             }
         }
 
@@ -61,9 +53,9 @@ final class PPublisherTests: XCTestCase {
             DispatchQueue.global(qos: .background).async {
                 usleep(1_000_000)
 
-                log.info("subscriber will nil")
+                print("subscriber will nil")
                 subscriber = nil
-                log.info("subscriber did nil")
+                print("subscriber did nil")
 
                 expectation1.fulfill()
             }
@@ -76,7 +68,7 @@ final class PPublisherTests: XCTestCase {
 
         usleep(1_000_000)
 
-        log.info("Exit \(#function)")
+        print("Exit \(#function)")
     }
 
     func testPublisher() {

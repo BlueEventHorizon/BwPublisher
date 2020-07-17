@@ -17,14 +17,15 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(name: "Logger", url: "git@github.com:BlueEventHorizon/Logger.git", from: "1.5.4")
+        //.package(name: "Logger", url: "git@github.com:BlueEventHorizon/Logger.git", from: "1.5.4")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "PPublisher",
-            dependencies: ["Logger"]),
+            //dependencies: ["Logger"]),
+            dependencies: []),
         .testTarget(
             name: "PPublisherTests",
             dependencies: ["PPublisher"]),

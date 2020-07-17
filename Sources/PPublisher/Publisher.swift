@@ -40,7 +40,6 @@ public final class SubscriptionBag {
     }
 
     deinit {
-        log.deinit(self)
         for unsubscribable in unsubscribables {
             unsubscribable.unsubscribe(idetifier)
         }
@@ -94,10 +93,6 @@ public final class Publisher<ContentsType> {
         // 指定されたidentifierによってunsubscribeする
         fileprivate func unsubscribe(_ identifier: SubscribeBagIdentifier) {
             self.publisher?.unsubscribe(by: identifier)
-        }
-
-        deinit {
-            log.deinit(self)
         }
     }
 
