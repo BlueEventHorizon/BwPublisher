@@ -9,6 +9,8 @@
 import Foundation
 import Logger
 
+let log = Logger.default
+
 // MARK: - Unsubscribable
 
 /// A protocol with a method for canceling subscribe all at once

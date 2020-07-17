@@ -8,7 +8,6 @@
 
 import XCTest
 import Logger
-import PPublisherTestApp
 
 class PublisherTests: XCTestCase {
 
