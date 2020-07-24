@@ -1,11 +1,11 @@
 # PPublisher
 
-This is private implementation of core of publisher/subscriber.
+## PPublisher is the light weight publish/subscribe library.
 
-I don't need any waste functions except observing values.
+This library can be used for the purpose of operating loosely coupled between software layers like RxSwift and Combine Framework.
+It's very lightweight and consumes little memory, as only the minimum amount of observing functionality is implemented.
+It is suitable for use in apps with limited memory, such as App Clips introduced from iOS14.
 
-That is most simple publisher/subscriber library.
-
-And to study Apple's combine or RxSwift is not aim for this project.
+## Usage
 
 

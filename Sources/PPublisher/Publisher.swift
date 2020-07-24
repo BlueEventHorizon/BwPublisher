@@ -20,7 +20,7 @@ private protocol Unsubscribable {
 public typealias Subscriber = AnyObject
 public typealias SubscribeBagIdentifier = Int
 
-// MARK: - SubscribeBag
+// MARK: - SubscriptionBag
 
 /// Class for canceling subscribe when subscribed instance is destroyed
 

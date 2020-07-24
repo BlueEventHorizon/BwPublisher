@@ -1,3 +1,10 @@
+//
+//  PPublisherTests.swift
+//  PPublisher
+//
+//  Created by k_terada on 2020/07/23.
+//
+
 import XCTest
 @testable import PPublisher
 
