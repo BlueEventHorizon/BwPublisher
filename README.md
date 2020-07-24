@@ -8,4 +8,41 @@ It is suitable for use in apps with limited memory, such as App Clips introduced
 
 ## Usage
 
+it is very easy to use PPublisher
+
+### Publisher
+
+```:swift
+
+class Hoge {
+    var publisher = Publisher<String>()
+    
+    func action() {
+        publisher.publish("Hoge Updated")
+    }
+}
+
+```
+
+
+### Subscriber
+
+```:swift
+
+class Fuga {
+
+    let hoge = Hoge()
+    var bag = SubscriptionBag()
+    
+    ... invoke configure() at somwhere ...
+    
+    func configure() {
+        hoge.publisher.subscribe.subscribe(self) { [weak self] message in
+            print(message)
+        }
+        .unsubscribed(by: bag)
+    }
+}
+
+```
 
