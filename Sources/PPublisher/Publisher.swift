@@ -1,15 +1,12 @@
 //
 //  Publisher.swift
-//  Publisher
+//  PPublisher
 //
 //  Created by k2moons on 2018/07/28.
 //  Copyright (c) 2018 k2moons. All rights reserved.
 //
 
 import Foundation
-import Logger
-
-let log = Logger.default
 
 // MARK: - Unsubscribable
 
@@ -23,19 +20,18 @@ private protocol Unsubscribable {
 public typealias Subscriber = AnyObject
 public typealias SubscribeBagIdentifier = Int
 
-// MARK: - SubscribeBag
+// MARK: - SubscriptionBag
 
 /// Class for canceling subscribe when subscribed instance is destroyed
 
-public final class SubscribeBag {
-
+public final class SubscriptionBag {
     private var unsubscribables = [Unsubscribable]()
     private static var globalIdentifier: SubscribeBagIdentifier = 0
     private(set) var idetifier: SubscribeBagIdentifier
 
     public init() {
-        idetifier = SubscribeBag.globalIdentifier
-        SubscribeBag.globalIdentifier += 1
+        idetifier = SubscriptionBag.globalIdentifier
+        SubscriptionBag.globalIdentifier += 1
     }
 
     fileprivate func set(_ subscriberInfo: Unsubscribable) -> SubscribeBagIdentifier {
@@ -44,7 +40,6 @@ public final class SubscribeBag {
     }
 
     deinit {
-        log.deinit(self)
         for unsubscribable in unsubscribables {
             unsubscribable.unsubscribe(idetifier)
         }
@@ -57,14 +52,12 @@ public final class SubscribeBag {
 //
 //
 public final class Publisher<ContentsType> {
-
     // ---------------------------------------------------------------
     // subscribe()される時にSubscriberの情報を格納して、Publisherに保持される。
     // またsubscribe()の戻り値となるので、SubscribeBagに渡すことで自動削除できるようになる
 
     public class Subscription: Unsubscribable {
-
-        fileprivate var action: ((_ result: ContentsType ) -> Void)
+        fileprivate var action: (_ result: ContentsType) -> Void
         fileprivate weak var subscriber: Subscriber?
         fileprivate var once: Bool = false
         fileprivate var main: Bool = true
@@ -72,8 +65,7 @@ public final class Publisher<ContentsType> {
         private var publisher: Publisher<ContentsType>?
         private(set) var identifier: SubscribeBagIdentifier = -1
 
-        required public init(
-
+        public required init(
             _ subscriber: Subscriber,
             publisher: Publisher<ContentsType>,
             once: Bool, main: Bool,
@@ -87,7 +79,7 @@ public final class Publisher<ContentsType> {
             self.publisher = publisher
         }
 
-        public func unsubscribed(by unsubscribeBag: SubscribeBag) {
+        public func unsubscribed(by unsubscribeBag: SubscriptionBag) {
             identifier = unsubscribeBag.set(self)
         }
 
@@ -101,10 +93,6 @@ public final class Publisher<ContentsType> {
         // 指定されたidentifierによってunsubscribeする
         fileprivate func unsubscribe(_ identifier: SubscribeBagIdentifier) {
             self.publisher?.unsubscribe(by: identifier)
-        }
-
-        deinit {
-            log.deinit(self)
         }
     }
 
@@ -130,20 +118,19 @@ public final class Publisher<ContentsType> {
 
     @discardableResult
     public func subscribe(
-
         _ subscriber: Subscriber,
         latest: Bool = false,
         main: Bool = true,
-        action: @escaping ((_ contents: ContentsType ) -> Void)
+        action: @escaping ((_ contents: ContentsType) -> Void)
 
     ) -> Subscription {
-
         if latest, let _latestContents = latestContents {
             if main {
                 DispatchQueue.main.async {
                     action(_latestContents)
                 }
-            } else {
+            }
+            else {
                 DispatchQueue.global().async {
                     action(_latestContents)
                 }
@@ -159,20 +146,19 @@ public final class Publisher<ContentsType> {
     // ---------------------------------------------------------------
 
     public func once(
-
         _ subscriber: Subscriber,
         latest: Bool = false,
         main: Bool = true,
-        action: @escaping ((_ contents: ContentsType ) -> Void)
+        action: @escaping ((_ contents: ContentsType) -> Void)
 
     ) {
-
         if latest, let _latestContents = latestContents {
             if main {
                 DispatchQueue.main.async {
                     action(_latestContents)
                 }
-            } else {
+            }
+            else {
                 DispatchQueue.global().async {
                     action(_latestContents)
                 }
@@ -190,7 +176,6 @@ public final class Publisher<ContentsType> {
     /// - Parameter contents: Contents to be published to subscribers(observers)
 
     public func publish(_ contents: ContentsType) {
-
         latestContents = contents
 
         for subscriberInfo in subscriptions {
@@ -198,7 +183,8 @@ public final class Publisher<ContentsType> {
                 DispatchQueue.main.async {
                     subscriberInfo.action(contents)
                 }
-            } else {
+            }
+            else {
                 DispatchQueue.global().async {
                     subscriberInfo.action(contents)
                 }
@@ -206,18 +192,19 @@ public final class Publisher<ContentsType> {
         }
 
         // １度だけコンテンツ取得の場合は、ここで終了
-        subscriptions = subscriptions.filter({ !$0.once })
+        subscriptions = subscriptions.filter { !$0.once }
     }
 
     // Subscriberを渡してsubscriptionを終了する
     //
     public func unsubscribe(by subscriber: Subscriber) {
-        subscriptions = subscriptions.filter({ !($0.subscriber === subscriber) })
+        subscriptions = subscriptions.filter { !($0.subscriber === subscriber) }
     }
 
     // SubscribeBagから、Subscriptionを介して呼び出される。SubscribeBag毎に割り振られたidentifierでsubscriptionを終了する
     //
     fileprivate func unsubscribe(by identifier: SubscribeBagIdentifier) {
-        subscriptions = subscriptions.filter({ !($0.identifier == identifier) })
+        subscriptions = subscriptions.filter { !($0.identifier == identifier) }
     }
 }
+
