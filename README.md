@@ -12,7 +12,7 @@ it is very easy to use PPublisher
 
 ### Publisher
 
-```:swift
+```swift
 
 class Hoge {
     var publisher = Publisher<String>()
@@ -27,7 +27,7 @@ class Hoge {
 
 ### Subscriber
 
-```:swift
+```swift
 
 class Fuga {
 
