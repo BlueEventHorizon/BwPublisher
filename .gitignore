@@ -1,12 +1,13 @@
+# ==================================================
+# 一般設定
+# ==================================================
+
 # Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+/*.xcodeproj
+*.xcworkspace/
 
-## Build generated
 build/
-DerivedData/
-
-## Various settings
+Build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -16,54 +17,49 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
-
-## Other
-*.moved-aside
 *.xccheckout
-*.xcscmblueprint
-
-## Obj-C/Swift specific
+*.moved-aside
+DerivedData
 *.hmap
 *.ipa
-*.dSYM.zip
-*.dSYM
+*.xcuserstate
+*.o
 
-## Playgrounds
 timeline.xctimeline
-playground.xcworkspace
+
+# Info.plist
+Info.plist
+
+# RSwift
+R.generated.swift
+
+# MacOS
+.DS_Store
+
+# Linux
+*.swp
+*.swo
+
+# direnv
+.envrc
+
+com.mono0926.LicensePlist
+com.mono0926.LicensePlist.*
+
+# etc.
+infer-out/
 
 # Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-Package.resolved
 .build/
-
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
+/Packages
+Package.resolved
+.swiftpm/
 
 # Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
+Carthage/
 
-Carthage/Build
+# CocoaPods
+Pods/
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-.swiftpm
+# Bundle
+vendor/
