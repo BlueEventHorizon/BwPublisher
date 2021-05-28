@@ -1,12 +1,25 @@
+
+# ==============
+# Xcodegen
+# ==============
+
+# /*.xcodeproj
+# *.xcworkspace/
+# Info.plist
+
+# ==============
 # Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# ==============
 
-## Build generated
+xcuserdata/
+project.xcworkspace/xcshareddata/
+project.xcworkspace/
+DerivedData
+*.xcuserstate
+
 build/
-DerivedData/
+Build/
 
-## Various settings
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -16,54 +29,73 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
-
-## Other
-*.moved-aside
 *.xccheckout
-*.xcscmblueprint
-
-## Obj-C/Swift specific
+*.moved-aside
 *.hmap
 *.ipa
-*.dSYM.zip
-*.dSYM
 
-## Playgrounds
+*.o
+
 timeline.xctimeline
-playground.xcworkspace
 
+# ==============
 # Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-Package.resolved
+# ==============
+
 .build/
+/Packages
+Package.resolved
+.swiftpm/
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
+# ==============
+# RSwift
+# ==============
 
+R.generated.swift
+
+# ==============
+# MacOS
+# ==============
+
+.DS_Store
+
+# ==============
+# Linux
+# ==============
+
+*.swp
+*.swo
+
+# direnv
+.envrc
+
+# ==============
+# LicensePlist
+# ==============
+
+com.mono0926.LicensePlist
+com.mono0926.LicensePlist.*
+
+# ==============
 # Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
+# ==============
 
-Carthage/Build
+Carthage/
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
+# ==============
+# CocoaPods
+# ==============
 
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-.swiftpm
+Pods/
+
+# ==============
+# Bundle
+# ==============
+
+vendor/
+
+# ==============
+# etc.
+# ==============
+
+infer-out/
