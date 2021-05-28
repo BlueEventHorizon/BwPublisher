@@ -1,13 +1,25 @@
-# ==================================================
-# 一般設定
-# ==================================================
 
+# ==============
+# Xcodegen
+# ==============
+
+# /*.xcodeproj
+# *.xcworkspace/
+# Info.plist
+
+# ==============
 # Xcode
-/*.xcodeproj
-*.xcworkspace/
+# ==============
+
+xcuserdata/
+project.xcworkspace/xcshareddata/
+project.xcworkspace/
+DerivedData
+*.xcuserstate
 
 build/
 Build/
+
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -19,47 +31,71 @@ Build/
 xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData
 *.hmap
 *.ipa
-*.xcuserstate
+
 *.o
 
 timeline.xctimeline
 
-# Info.plist
-Info.plist
+# ==============
+# Swift Package Manager
+# ==============
 
+.build/
+/Packages
+Package.resolved
+.swiftpm/
+
+# ==============
 # RSwift
+# ==============
+
 R.generated.swift
 
+# ==============
 # MacOS
+# ==============
+
 .DS_Store
 
+# ==============
 # Linux
+# ==============
+
 *.swp
 *.swo
 
 # direnv
 .envrc
 
+# ==============
+# LicensePlist
+# ==============
+
 com.mono0926.LicensePlist
 com.mono0926.LicensePlist.*
 
-# etc.
-infer-out/
-
-# Swift Package Manager
-.build/
-/Packages
-Package.resolved
-.swiftpm/
-
+# ==============
 # Carthage
+# ==============
+
 Carthage/
 
+# ==============
 # CocoaPods
+# ==============
+
 Pods/
 
+# ==============
 # Bundle
+# ==============
+
 vendor/
+
+# ==============
+# etc.
+# ==============
+
+infer-out/
