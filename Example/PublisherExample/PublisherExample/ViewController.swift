@@ -1,9 +1,8 @@
 //
 //  ViewController.swift
-//  PPublisherTestApp
+//  PublisherExample
 //
-//  Created by k_terada on 2020/06/14.
-//  Copyright © 2020 k2terada. All rights reserved.
+//  Created by Katsuhiko Terada on 2021/07/09.
 //
 
 import UIKit
