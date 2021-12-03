@@ -42,7 +42,7 @@ public final class SubscriptionBag {
     }
 
     deinit {
-        //log.deinit(self)
+        // log.deinit(self)
         for unsubscribable in unsubscribables {
             unsubscribable.unsubscribe(idetifier)
         }
