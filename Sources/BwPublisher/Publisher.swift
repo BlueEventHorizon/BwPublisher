@@ -1,12 +1,14 @@
 //
 //  Publisher.swift
-//  PPublisher
+//  BwTools
 //
 //  Created by k2moons on 2018/07/28.
 //  Copyright (c) 2018 k2moons. All rights reserved.
 //
 
 import Foundation
+
+// swiftlint:disable strict_fileprivate
 
 // MARK: - Unsubscribable
 
@@ -40,6 +42,7 @@ public final class SubscriptionBag {
     }
 
     deinit {
+        // log.deinit(self)
         for unsubscribable in unsubscribables {
             unsubscribable.unsubscribe(idetifier)
         }
@@ -68,9 +71,9 @@ public final class Publisher<ContentsType> {
         public required init(
             _ subscriber: Subscriber,
             publisher: Publisher<ContentsType>,
-            once: Bool, main: Bool,
+            once: Bool,
+            main: Bool,
             action: @escaping ((ContentsType) -> Void)
-
         ) {
             self.subscriber = subscriber
             self.once = once
@@ -85,8 +88,8 @@ public final class Publisher<ContentsType> {
 
         // 指定されたSubscriberによってsubscribeされているものをunsubscribeする
         fileprivate func unsubscribe() {
-            if let _observer = subscriber {
-                self.publisher?.unsubscribe(by: _observer)
+            if let observer = subscriber {
+                self.publisher?.unsubscribe(by: observer)
             }
         }
 
@@ -94,6 +97,10 @@ public final class Publisher<ContentsType> {
         fileprivate func unsubscribe(_ identifier: SubscribeBagIdentifier) {
             self.publisher?.unsubscribe(by: identifier)
         }
+
+//        deinit {
+//            log.deinit(self)
+//        }
     }
 
     // ---------------------------------------------------------------
@@ -122,17 +129,15 @@ public final class Publisher<ContentsType> {
         latest: Bool = false,
         main: Bool = true,
         action: @escaping ((_ contents: ContentsType) -> Void)
-
     ) -> Subscription {
-        if latest, let _latestContents = latestContents {
+        if latest, let latestContents = latestContents {
             if main {
                 DispatchQueue.main.async {
-                    action(_latestContents)
+                    action(latestContents)
                 }
-            }
-            else {
+            } else {
                 DispatchQueue.global().async {
-                    action(_latestContents)
+                    action(latestContents)
                 }
             }
         }
@@ -150,17 +155,15 @@ public final class Publisher<ContentsType> {
         latest: Bool = false,
         main: Bool = true,
         action: @escaping ((_ contents: ContentsType) -> Void)
-
     ) {
-        if latest, let _latestContents = latestContents {
+        if latest, let latestContents = latestContents {
             if main {
                 DispatchQueue.main.async {
-                    action(_latestContents)
+                    action(latestContents)
                 }
-            }
-            else {
+            } else {
                 DispatchQueue.global().async {
-                    action(_latestContents)
+                    action(latestContents)
                 }
             }
             return
@@ -183,8 +186,7 @@ public final class Publisher<ContentsType> {
                 DispatchQueue.main.async {
                     subscriberInfo.action(contents)
                 }
-            }
-            else {
+            } else {
                 DispatchQueue.global().async {
                     subscriberInfo.action(contents)
                 }
@@ -207,4 +209,3 @@ public final class Publisher<ContentsType> {
         subscriptions = subscriptions.filter { !($0.identifier == identifier) }
     }
 }
-
