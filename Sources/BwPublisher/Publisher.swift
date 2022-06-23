@@ -174,6 +174,9 @@ public final class Publisher<ContentsType> {
     public func publish(_ contents: ContentsType) {
         latestContents = contents
 
+        // Subscriberはnilの場合は削除
+        unsubscribeNoSubscriber()
+
         for subscriberInfo in subscriptions {
             if subscriberInfo.main {
                 DispatchQueue.main.async {
@@ -188,6 +191,11 @@ public final class Publisher<ContentsType> {
 
         // １度だけコンテンツ取得の場合は、ここで終了
         subscriptions = subscriptions.filter { !$0.once }
+    }
+
+    // Subscriberはnilの場合は削除
+    public func unsubscribeNoSubscriber() {
+        subscriptions = subscriptions.filter { $0.subscriber != nil }
     }
 
     // Subscriberを渡してsubscriptionを終了する
