@@ -15,7 +15,7 @@ import Foundation
 /// A protocol with a method for canceling subscribe all at once
 private protocol Unsubscribable {
     func unsubscribe()
-    func unsubscribe(_ idetifier: SubscribeBagIdentifier)
+    func unsubscribe(_ identifier: SubscribeBagIdentifier)
 }
 
 /// Because this is just an identifier, AnyObject can be
@@ -29,22 +29,22 @@ public typealias SubscribeBagIdentifier = Int
 public final class SubscriptionBag {
     private var unsubscribables = [Unsubscribable]()
     private static var globalIdentifier: SubscribeBagIdentifier = 0
-    private(set) var idetifier: SubscribeBagIdentifier
+    private(set) var identifier: SubscribeBagIdentifier
 
     public init() {
-        idetifier = SubscriptionBag.globalIdentifier
+        identifier = SubscriptionBag.globalIdentifier
         SubscriptionBag.globalIdentifier += 1
     }
 
     fileprivate func set(_ subscriberInfo: Unsubscribable) -> SubscribeBagIdentifier {
         unsubscribables.append(subscriberInfo)
-        return idetifier
+        return identifier
     }
 
     deinit {
         // log.deinit(self)
         for unsubscribable in unsubscribables {
-            unsubscribable.unsubscribe(idetifier)
+            unsubscribable.unsubscribe(identifier)
         }
     }
 }
@@ -118,7 +118,7 @@ public final class Publisher<ContentsType> {
     /// - Parameters:
     ///   - subscriber: BwObserver that observe this Publisher. This is just identifier of subscriber.
     ///   - once: subscribe once
-    ///   - latest: immediately return contens, if it already exists.
+    ///   - latest: immediately return contents, if it already exists.
     ///   - main: if true, action executed in main thread
     ///   - action: closure that is invoked when contents are published
     /// - Returns: Subscription?
