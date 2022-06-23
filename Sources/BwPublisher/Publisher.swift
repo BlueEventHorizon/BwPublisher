@@ -10,24 +10,24 @@ import Foundation
 
 // swiftlint:disable strict_fileprivate
 
-// MARK: - Unsubscribable
+// MARK: - UnsubscribeProtocol
 
 /// A protocol with a method for canceling subscribe all at once
-private protocol Unsubscribable {
+private protocol UnsubscribeProtocol {
     func unsubscribe()
     func unsubscribe(_ identifier: SubscribeBagIdentifier)
 }
 
 /// Because this is just an identifier, AnyObject can be
 public typealias Subscriber = AnyObject
-public typealias SubscribeBagIdentifier = Int
+
+typealias SubscribeBagIdentifier = Int
 
 // MARK: - SubscriptionBag
 
 /// Class for canceling subscribe when subscribed instance is destroyed
-
 public final class SubscriptionBag {
-    private var unsubscribables = [Unsubscribable]()
+    private var subscribers = [UnsubscribeProtocol]()
     private static var globalIdentifier: SubscribeBagIdentifier = 0
     private(set) var identifier: SubscribeBagIdentifier
 
@@ -36,15 +36,14 @@ public final class SubscriptionBag {
         SubscriptionBag.globalIdentifier += 1
     }
 
-    fileprivate func set(_ subscriberInfo: Unsubscribable) -> SubscribeBagIdentifier {
-        unsubscribables.append(subscriberInfo)
+    fileprivate func set(_ subscriberInfo: UnsubscribeProtocol) -> SubscribeBagIdentifier {
+        subscribers.append(subscriberInfo)
         return identifier
     }
 
     deinit {
-        // log.deinit(self)
-        for unsubscribable in unsubscribables {
-            unsubscribable.unsubscribe(identifier)
+        for subscriber in subscribers {
+            subscriber.unsubscribe(identifier)
         }
     }
 }
@@ -58,8 +57,7 @@ public final class Publisher<ContentsType> {
     // ---------------------------------------------------------------
     // subscribe()される時にSubscriberの情報を格納して、Publisherに保持される。
     // またsubscribe()の戻り値となるので、SubscribeBagに渡すことで自動削除できるようになる
-
-    public class Subscription: Unsubscribable {
+    public class Subscription: UnsubscribeProtocol {
         fileprivate var action: (_ result: ContentsType) -> Void
         fileprivate weak var subscriber: Subscriber?
         fileprivate var once: Bool = false
@@ -89,18 +87,14 @@ public final class Publisher<ContentsType> {
         // 指定されたSubscriberによってsubscribeされているものをunsubscribeする
         fileprivate func unsubscribe() {
             if let observer = subscriber {
-                self.publisher?.unsubscribe(by: observer)
+                publisher?.unsubscribe(by: observer)
             }
         }
 
         // 指定されたidentifierによってunsubscribeする
         fileprivate func unsubscribe(_ identifier: SubscribeBagIdentifier) {
-            self.publisher?.unsubscribe(by: identifier)
+            publisher?.unsubscribe(by: identifier)
         }
-
-//        deinit {
-//            log.deinit(self)
-//        }
     }
 
     // ---------------------------------------------------------------
@@ -122,7 +116,6 @@ public final class Publisher<ContentsType> {
     ///   - main: if true, action executed in main thread
     ///   - action: closure that is invoked when contents are published
     /// - Returns: Subscription?
-
     @discardableResult
     public func subscribe(
         _ subscriber: Subscriber,
@@ -198,13 +191,11 @@ public final class Publisher<ContentsType> {
     }
 
     // Subscriberを渡してsubscriptionを終了する
-    //
     public func unsubscribe(by subscriber: Subscriber) {
         subscriptions = subscriptions.filter { !($0.subscriber === subscriber) }
     }
 
     // SubscribeBagから、Subscriptionを介して呼び出される。SubscribeBag毎に割り振られたidentifierでsubscriptionを終了する
-    //
     fileprivate func unsubscribe(by identifier: SubscribeBagIdentifier) {
         subscriptions = subscriptions.filter { !($0.identifier == identifier) }
     }

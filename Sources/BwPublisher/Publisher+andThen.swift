@@ -11,7 +11,7 @@ import Foundation
 extension Publisher {
     // ⚠️未完成
     public func andThen<T>(_ nextTask: Publisher<T>, completion: @escaping ((Publisher<T>, ContentsType) -> Void)) -> Publisher<T> {
-        self.subscribe(self) { result in
+        subscribe(self) { result in
             completion(nextTask, result)
         }
         return nextTask
