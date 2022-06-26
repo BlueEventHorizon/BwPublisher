@@ -171,7 +171,7 @@ public final class Publisher<ContentsType> {
     ///
     /// - Parameter contents: Contents to be published to subscribers(observers)
 
-    public func publish(_ contents: ContentsType) {
+    public func send(_ contents: ContentsType) {
         latestContents = contents
 
         // Subscriberはnilの場合は削除

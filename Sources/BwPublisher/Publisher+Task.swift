@@ -34,6 +34,6 @@ extension Publisher {
     }
 
     public func signal(_ contents: ContentsType) {
-        publish(contents)
+        send(contents)
     }
 }

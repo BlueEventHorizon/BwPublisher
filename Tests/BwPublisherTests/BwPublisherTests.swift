@@ -19,7 +19,7 @@ final class BwPublisherTests: XCTestCase {
                 DispatchQueue.global(qos: .userInitiated).async {
                     while true {
                         usleep(100_000)
-                        self.value.publish(self.counter)
+                        self.value.send(self.counter)
                         self.counter += 1
                     }
                 }
@@ -88,10 +88,10 @@ final class BwPublisherTests: XCTestCase {
             expectation4.fulfill()
         }).unsubscribed(by: bag)
 
-        publisher.publish("first")
-        publisher.publish("second")
+        publisher.send("first")
+        publisher.send("second")
         publisher.unsubscribe(by: self)
-        publisher.publish("third")
+        publisher.send("third")
 
         wait(for: [expectation1, expectation2, expectation3, expectation4], timeout: 1.0)
     }
