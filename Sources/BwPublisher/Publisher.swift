@@ -102,6 +102,10 @@ public final class Publisher<ContentsType> {
     private var subscriptions: [Subscription] = []
     private var latestContents: ContentsType?
 
+    public var value: ContentsType? {
+        latestContents
+    }
+
     public init(_ contents: ContentsType? = nil) {
         latestContents = contents
     }
