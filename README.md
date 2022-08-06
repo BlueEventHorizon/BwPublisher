@@ -1,5 +1,9 @@
 # BwPublisher
 
+[![Release](https://img.shields.io/github/v/release/BlueEventHorizon/BwPublisher)](https://github.com/BlueEventHorizon/BwPublisher/releases/latest)
+[![License](https://img.shields.io/github/license/BlueEventHorizon/BwPublisher)](https://github.com/BlueEventHorizon/BwPublisher/blob/main/LICENSE)
+[![Twitter](https://img.shields.io/twitter/follow/beowulf_tech?style=social)](https://twitter.com/beowulf_tech)
+
 ## BwPublisher is the light weight publish/subscribe library
 
 This library can be used for the purpose of operating loosely coupled between software layers like RxSwift and Combine Framework.
