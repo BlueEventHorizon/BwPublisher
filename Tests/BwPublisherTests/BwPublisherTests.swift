@@ -19,7 +19,7 @@ final class BwPublisherTests: XCTestCase {
                 DispatchQueue.global(qos: .userInitiated).async {
                     while true {
                         usleep(100_000)
-                        self.value.publish(self.counter)
+                        self.value.send(self.counter)
                         self.counter += 1
                     }
                 }
@@ -35,9 +35,11 @@ final class BwPublisherTests: XCTestCase {
             }
 
             func configure() {
-                publisher.value.subscribe(self) { value in
-                    print("value = \(value)")
-                }.unsubscribed(by: bag)
+                publisher.value
+                    .sink(self) { value in
+                        print("value = \(value)")
+                    }
+                    .unsubscribed(by: bag)
             }
         }
 
@@ -72,26 +74,32 @@ final class BwPublisherTests: XCTestCase {
         let bag: SubscriptionBag = SubscriptionBag()
 
         let publisher = Publisher<String>()
-        publisher.once(self, action: { r in print("\(r)-1")
-            expectation1.fulfill()
-        })
+        publisher
+            .once(self, action: { r in print("\(r)-1")
+                expectation1.fulfill()
+            })
 
-        publisher.subscribe(self, action: { r in print("\(r)-2")
-            expectation2.fulfill()
-        }).unsubscribed(by: bag)
+        publisher
+            .sink(self, action: { r in print("\(r)-2")
+                expectation2.fulfill()
+            })
+            .unsubscribed(by: bag)
 
-        publisher.once(self, action: { r in print("\(r)-3")
-            expectation3.fulfill()
-        })
+        publisher
+            .once(self, action: { r in print("\(r)-3")
+                expectation3.fulfill()
+            })
 
-        publisher.subscribe(self, action: { r in print("\(r)-4")
-            expectation4.fulfill()
-        }).unsubscribed(by: bag)
+        publisher
+            .sink(self, action: { r in print("\(r)-4")
+                expectation4.fulfill()
+            })
+            .unsubscribed(by: bag)
 
-        publisher.publish("first")
-        publisher.publish("second")
+        publisher.send("first")
+        publisher.send("second")
         publisher.unsubscribe(by: self)
-        publisher.publish("third")
+        publisher.send("third")
 
         wait(for: [expectation1, expectation2, expectation3, expectation4], timeout: 1.0)
     }
@@ -126,7 +134,7 @@ final class BwPublisherTests: XCTestCase {
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }

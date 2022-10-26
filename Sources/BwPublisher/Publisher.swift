@@ -10,41 +10,40 @@ import Foundation
 
 // swiftlint:disable strict_fileprivate
 
-// MARK: - Unsubscribable
+// MARK: - UnsubscribeProtocol
 
 /// A protocol with a method for canceling subscribe all at once
-private protocol Unsubscribable {
+private protocol UnsubscribeProtocol {
     func unsubscribe()
-    func unsubscribe(_ idetifier: SubscribeBagIdentifier)
+    func unsubscribe(_ identifier: SubscribeBagIdentifier)
 }
 
 /// Because this is just an identifier, AnyObject can be
 public typealias Subscriber = AnyObject
-public typealias SubscribeBagIdentifier = Int
+
+typealias SubscribeBagIdentifier = Int
 
 // MARK: - SubscriptionBag
 
 /// Class for canceling subscribe when subscribed instance is destroyed
-
 public final class SubscriptionBag {
-    private var unsubscribables = [Unsubscribable]()
+    private var subscribers = [UnsubscribeProtocol]()
     private static var globalIdentifier: SubscribeBagIdentifier = 0
-    private(set) var idetifier: SubscribeBagIdentifier
+    private(set) var identifier: SubscribeBagIdentifier
 
     public init() {
-        idetifier = SubscriptionBag.globalIdentifier
+        identifier = SubscriptionBag.globalIdentifier
         SubscriptionBag.globalIdentifier += 1
     }
 
-    fileprivate func set(_ subscriberInfo: Unsubscribable) -> SubscribeBagIdentifier {
-        unsubscribables.append(subscriberInfo)
-        return idetifier
+    fileprivate func set(_ subscriberInfo: UnsubscribeProtocol) -> SubscribeBagIdentifier {
+        subscribers.append(subscriberInfo)
+        return identifier
     }
 
     deinit {
-        // log.deinit(self)
-        for unsubscribable in unsubscribables {
-            unsubscribable.unsubscribe(idetifier)
+        for subscriber in subscribers {
+            subscriber.unsubscribe(identifier)
         }
     }
 }
@@ -58,8 +57,7 @@ public final class Publisher<ContentsType> {
     // ---------------------------------------------------------------
     // subscribe()される時にSubscriberの情報を格納して、Publisherに保持される。
     // またsubscribe()の戻り値となるので、SubscribeBagに渡すことで自動削除できるようになる
-
-    public class Subscription: Unsubscribable {
+    public class Subscription: UnsubscribeProtocol {
         fileprivate var action: (_ result: ContentsType) -> Void
         fileprivate weak var subscriber: Subscriber?
         fileprivate var once: Bool = false
@@ -89,24 +87,24 @@ public final class Publisher<ContentsType> {
         // 指定されたSubscriberによってsubscribeされているものをunsubscribeする
         fileprivate func unsubscribe() {
             if let observer = subscriber {
-                self.publisher?.unsubscribe(by: observer)
+                publisher?.unsubscribe(by: observer)
             }
         }
 
         // 指定されたidentifierによってunsubscribeする
         fileprivate func unsubscribe(_ identifier: SubscribeBagIdentifier) {
-            self.publisher?.unsubscribe(by: identifier)
+            publisher?.unsubscribe(by: identifier)
         }
-
-//        deinit {
-//            log.deinit(self)
-//        }
     }
 
     // ---------------------------------------------------------------
 
     private var subscriptions: [Subscription] = []
     private var latestContents: ContentsType?
+
+    public var value: ContentsType? {
+        latestContents
+    }
 
     public init(_ contents: ContentsType? = nil) {
         latestContents = contents
@@ -118,13 +116,12 @@ public final class Publisher<ContentsType> {
     /// - Parameters:
     ///   - subscriber: BwObserver that observe this Publisher. This is just identifier of subscriber.
     ///   - once: subscribe once
-    ///   - latest: immediately return contens, if it already exists.
+    ///   - latest: immediately return contents, if it already exists.
     ///   - main: if true, action executed in main thread
     ///   - action: closure that is invoked when contents are published
     /// - Returns: Subscription?
-
     @discardableResult
-    public func subscribe(
+    public func sink(
         _ subscriber: Subscriber,
         latest: Bool = false,
         main: Bool = true,
@@ -178,8 +175,11 @@ public final class Publisher<ContentsType> {
     ///
     /// - Parameter contents: Contents to be published to subscribers(observers)
 
-    public func publish(_ contents: ContentsType) {
+    public func send(_ contents: ContentsType) {
         latestContents = contents
+
+        // Subscriberはnilの場合は削除
+        unsubscribeNoSubscriber()
 
         for subscriberInfo in subscriptions {
             if subscriberInfo.main {
@@ -197,15 +197,19 @@ public final class Publisher<ContentsType> {
         subscriptions = subscriptions.filter { !$0.once }
     }
 
+    // Subscriberはnilの場合は削除
+    public func unsubscribeNoSubscriber() {
+        subscriptions = subscriptions.filter { $0.subscriber != nil }
+    }
+
     // Subscriberを渡してsubscriptionを終了する
-    //
     public func unsubscribe(by subscriber: Subscriber) {
         subscriptions = subscriptions.filter { !($0.subscriber === subscriber) }
     }
 
     // SubscribeBagから、Subscriptionを介して呼び出される。SubscribeBag毎に割り振られたidentifierでsubscriptionを終了する
-    //
     fileprivate func unsubscribe(by identifier: SubscribeBagIdentifier) {
         subscriptions = subscriptions.filter { !($0.identifier == identifier) }
     }
 }
+

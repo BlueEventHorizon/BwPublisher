@@ -23,7 +23,7 @@ extension Publisher {
     /// - Returns: 次のタスク
     public func wait<T>(main: Bool = true, completion: @escaping ((Publisher<T>, ContentsType) -> Void)) -> Publisher<T> {
         let task = Publisher<T>()
-        self.once(self, latest: true, main: main) { result in
+        once(self, latest: true, main: main) { result in
             completion(task, result)
         }
         return task
@@ -34,6 +34,6 @@ extension Publisher {
     }
 
     public func signal(_ contents: ContentsType) {
-        publish(contents)
+        send(contents)
     }
 }
