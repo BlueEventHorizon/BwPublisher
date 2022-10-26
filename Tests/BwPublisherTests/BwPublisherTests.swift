@@ -35,9 +35,11 @@ final class BwPublisherTests: XCTestCase {
             }
 
             func configure() {
-                publisher.value.subscribe(self) { value in
-                    print("value = \(value)")
-                }.unsubscribed(by: bag)
+                publisher.value
+                    .sink(self) { value in
+                        print("value = \(value)")
+                    }
+                    .unsubscribed(by: bag)
             }
         }
 
@@ -72,21 +74,27 @@ final class BwPublisherTests: XCTestCase {
         let bag: SubscriptionBag = SubscriptionBag()
 
         let publisher = Publisher<String>()
-        publisher.once(self, action: { r in print("\(r)-1")
-            expectation1.fulfill()
-        })
+        publisher
+            .once(self, action: { r in print("\(r)-1")
+                expectation1.fulfill()
+            })
 
-        publisher.subscribe(self, action: { r in print("\(r)-2")
-            expectation2.fulfill()
-        }).unsubscribed(by: bag)
+        publisher
+            .sink(self, action: { r in print("\(r)-2")
+                expectation2.fulfill()
+            })
+            .unsubscribed(by: bag)
 
-        publisher.once(self, action: { r in print("\(r)-3")
-            expectation3.fulfill()
-        })
+        publisher
+            .once(self, action: { r in print("\(r)-3")
+                expectation3.fulfill()
+            })
 
-        publisher.subscribe(self, action: { r in print("\(r)-4")
-            expectation4.fulfill()
-        }).unsubscribed(by: bag)
+        publisher
+            .sink(self, action: { r in print("\(r)-4")
+                expectation4.fulfill()
+            })
+            .unsubscribed(by: bag)
 
         publisher.send("first")
         publisher.send("second")

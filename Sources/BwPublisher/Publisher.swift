@@ -121,7 +121,7 @@ public final class Publisher<ContentsType> {
     ///   - action: closure that is invoked when contents are published
     /// - Returns: Subscription?
     @discardableResult
-    public func subscribe(
+    public func sink(
         _ subscriber: Subscriber,
         latest: Bool = false,
         main: Bool = true,
@@ -212,3 +212,4 @@ public final class Publisher<ContentsType> {
         subscriptions = subscriptions.filter { !($0.identifier == identifier) }
     }
 }
+
