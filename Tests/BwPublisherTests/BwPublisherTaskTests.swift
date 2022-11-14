@@ -113,7 +113,7 @@ final class BwPublisherTaskTests: XCTestCase {
         //
         //                expectation2.fulfill()
         //            }
-        //            .subscribe(self) { boolValue in
+        //            .sink(self) { boolValue in
         //                print("task3 completed with \(boolValue)")
         //
         //                expectation3.fulfill()
