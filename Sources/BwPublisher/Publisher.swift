@@ -65,6 +65,7 @@ public final class Publisher<ContentsType> {
 
         private var publisher: Publisher<ContentsType>?
         private(set) var identifier: SubscribeBagIdentifier = -1
+        private let semaphore = DispatchSemaphore(value: 1)
 
         public required init(
             _ subscriber: Subscriber,
@@ -81,11 +82,21 @@ public final class Publisher<ContentsType> {
         }
 
         public func unsubscribed(by unsubscribeBag: SubscriptionBag) {
+            semaphore.wait()
+            defer {
+                semaphore.signal()
+            }
+
             identifier = unsubscribeBag.set(self)
         }
 
         // 指定されたSubscriberによってsubscribeされているものをunsubscribeする
         fileprivate func unsubscribe() {
+            semaphore.wait()
+            defer {
+                semaphore.signal()
+            }
+
             if let observer = subscriber {
                 publisher?.unsubscribe(by: observer)
             }
@@ -93,6 +104,11 @@ public final class Publisher<ContentsType> {
 
         // 指定されたidentifierによってunsubscribeする
         fileprivate func unsubscribe(_ identifier: SubscribeBagIdentifier) {
+            semaphore.wait()
+            defer {
+                semaphore.signal()
+            }
+
             publisher?.unsubscribe(by: identifier)
         }
     }
@@ -101,6 +117,7 @@ public final class Publisher<ContentsType> {
 
     private var subscriptions: [Subscription] = []
     private var latestContents: ContentsType?
+    private let semaphore = DispatchSemaphore(value: 1)
 
     public var value: ContentsType? {
         latestContents
@@ -127,6 +144,11 @@ public final class Publisher<ContentsType> {
         main: Bool = true,
         action: @escaping ((_ contents: ContentsType) -> Void)
     ) -> Subscription {
+        semaphore.wait()
+        defer {
+            semaphore.signal()
+        }
+
         if latest, let latestContents = latestContents {
             if main {
                 DispatchQueue.main.async {
@@ -153,6 +175,11 @@ public final class Publisher<ContentsType> {
         main: Bool = true,
         action: @escaping ((_ contents: ContentsType) -> Void)
     ) {
+        semaphore.wait()
+        defer {
+            semaphore.signal()
+        }
+
         if latest, let latestContents = latestContents {
             if main {
                 DispatchQueue.main.async {
@@ -176,6 +203,11 @@ public final class Publisher<ContentsType> {
     /// - Parameter contents: Contents to be published to subscribers(observers)
 
     public func send(_ contents: ContentsType) {
+        semaphore.wait()
+        defer {
+            semaphore.signal()
+        }
+
         latestContents = contents
 
         // Subscriberはnilの場合は削除
@@ -197,19 +229,31 @@ public final class Publisher<ContentsType> {
         subscriptions = subscriptions.filter { !$0.once }
     }
 
-    // Subscriberはnilの場合は削除
-    public func unsubscribeNoSubscriber() {
-        subscriptions = subscriptions.filter { $0.subscriber != nil }
-    }
-
     // Subscriberを渡してsubscriptionを終了する
     public func unsubscribe(by subscriber: Subscriber) {
+        semaphore.wait()
+        defer {
+            semaphore.signal()
+        }
+
         subscriptions = subscriptions.filter { !($0.subscriber === subscriber) }
     }
 
     // SubscribeBagから、Subscriptionを介して呼び出される。SubscribeBag毎に割り振られたidentifierでsubscriptionを終了する
     fileprivate func unsubscribe(by identifier: SubscribeBagIdentifier) {
+        semaphore.wait()
+        defer {
+            semaphore.signal()
+        }
+
         subscriptions = subscriptions.filter { !($0.identifier == identifier) }
+    }
+    
+    // MARK: - private
+
+    // Subscriberはnilの場合は削除
+    private func unsubscribeNoSubscriber() {
+        subscriptions = subscriptions.filter { $0.subscriber != nil }
     }
 }
 
